@@ -15,19 +15,27 @@ if (!isset($_COOKIE["name"]) || !isset($json[$_COOKIE['name']])) {
     exit;
 }
 
-if ($json[$_COOKIE["name"]]['complete'] == "1") {
-    echo "You are already finished";
+if ($json[$_COOKIE["name"]]['complete_ssh'] == "1" && $json[$_COOKIE["name"]]["complete_scp"]) {
+    echo "You are already finished with both labs";
+    unlink("db.lck");
+    exit;
+}
+
+if (file_exists("/tmp/" . $json[$_COOKIE["name"]]["uid"] . ".txt")) {
+    $file = file_get_contents("/tmp/" . $json[$_COOKIE["name"]]["uid"] . ".txt");
+    if ($file == $_COOKIE["name"]) {
+        echo "You did the SCP lab!";
+        $json[$_COOKIE["name"]]["complete_scp"] = "1";
+        file_put_contents("db.json", json_encode($json));
+    }
     unlink("db.lck");
     exit;
 }
 
 if (file_exists("/tmp/" . $json[$_COOKIE["name"]]["uid"])) {
-    $file = file_get_contents("/tmp/" . $json[$_COOKIE["name"]]["uid"]);
-    if ($file == $_COOKIE["name"]) {
-        echo "You did it!";
-        $json[$_COOKIE["name"]]["complete"] = "1";
-        file_put_contents("db.json", json_encode($json));
-    }
+    echo "You did the SSH lab!";
+    $json[$_COOKIE["name"]]["complete_ssh"] = "1";
+    file_put_contents("db.json", json_encode($json));
     unlink("db.lck");
     exit;
 }

@@ -23,7 +23,8 @@ if (isset($_POST["username"])) {
     $uid = uniqid(rand(0,99999), true);
     $json[$_POST["username"]] = array(
         "username" => $_POST["username"],
-        "complete" => "0",
+        "complete_scp" => "0",
+        "complete_ssh" => "0",
         "uid" => $uid
     );
 
@@ -32,7 +33,7 @@ if (isset($_POST["username"])) {
     file_put_contents("db.json", json_encode($json));
     unlink("db.lck");
     echo "your username is " . $_POST['username'];
-    echo '<br><a download="' . $uid . '" href="data:text;base64,' . base64_encode($_POST['username']) . '">Download</a>';
+    echo '<br><a download="' . $uid . '.txt' . '" href="data:text;base64,' . base64_encode($_POST['username']) . '">Download</a>';
     exit;
 }
 ?>
